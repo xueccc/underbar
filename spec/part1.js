@@ -1,11 +1,13 @@
 (function() {
   'use strict';
-
+ 
   describe('Part I', function() {
 
     describe('identity', function() {
       checkForNativeMethods(function() {
-        _.identity(1);
+        _.identity = function(val) {
+          return val
+        };
       });
 
       it('should return whatever value is passed into it', function() {
@@ -19,7 +21,9 @@
 
     describe('first', function() {
       checkForNativeMethods(function() {
-        _.first([1,2,3]);
+        _.first = function(array, n) {
+          return n === undefined ? array[0] : array.slice(0, n);
+        };
       });
 
       it('should be able to pull out the first element of an array', function() {
@@ -41,7 +45,11 @@
 
     describe('last', function() {
       checkForNativeMethods(function() {
-        _.last([1,2,3]);
+        _.last = function (array, n) {
+          return n === undefined ? array[array.length -1] :
+          n > array.length ? array :
+          array.slice(array.length - n, n+1);
+        }
       });
 
       it('should pull the last element from an array', function() {
@@ -63,8 +71,20 @@
 
     describe('each', function() {
       checkForNativeMethods(function() {
-        _.each([1,2,3,4], function(number) {});
-      });
+        _.each = function(collection, iterator){
+          var iteratedCollection = collection;
+          if (Array.isArray(collection)){
+            for (var i= 0; i < collection.length; i++){
+              iterator(iteratedCollection[i], i, collection);
+            }
+          } else {
+            for (var key in iteratedCollection){
+              iterator(iteratedCollection[key], key, collection); 
+            }
+          }
+        };
+    });
+    
 
       it('should be a function', function() {
         expect(_.each).to.be.an.instanceOf(Function);
