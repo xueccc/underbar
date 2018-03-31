@@ -1,13 +1,11 @@
 (function() {
   'use strict';
- 
+
   describe('Part I', function() {
 
     describe('identity', function() {
       checkForNativeMethods(function() {
-        _.identity = function(val) {
-          return val
-        };
+        _.identity(1);
       });
 
       it('should return whatever value is passed into it', function() {
@@ -21,9 +19,7 @@
 
     describe('first', function() {
       checkForNativeMethods(function() {
-        _.first = function(array, n) {
-          return n === undefined ? array[0] : array.slice(0, n);
-        };
+        _.first([1,2,3]);
       });
 
       it('should be able to pull out the first element of an array', function() {
@@ -45,11 +41,7 @@
 
     describe('last', function() {
       checkForNativeMethods(function() {
-        _.last = function (array, n) {
-          return n === undefined ? array[array.length -1] :
-          n > array.length ? array :
-          array.slice(array.length - n, n+1);
-        }
+        _.last([1,2,3]);
       });
 
       it('should pull the last element from an array', function() {
@@ -71,20 +63,8 @@
 
     describe('each', function() {
       checkForNativeMethods(function() {
-        _.each = function(collection, iterator){
-          var iteratedCollection = collection;
-          if (Array.isArray(collection)){
-            for (var i= 0; i < collection.length; i++){
-              iterator(iteratedCollection[i], i, collection);
-            }
-          } else {
-            for (var key in iteratedCollection){
-              iterator(iteratedCollection[key], key, collection); 
-            }
-          }
-        };
-    });
-    
+        _.each([1,2,3,4], function(number) {});
+      });
 
       it('should be a function', function() {
         expect(_.each).to.be.an.instanceOf(Function);
@@ -238,16 +218,7 @@
 
     describe('indexOf', function() {
       checkForNativeMethods(function() {
-        _.indexOf = function(array, target){
-          var result = -1;
-          _.each(array, function(item, index) {
-            if (item === target && result === -1) {
-              result = index;
-            }
-          });
-          return result;
-        };
-        
+        _.indexOf([10, 20, 30, 40], 40)
       });
 
       it('should find 40 in the list', function() {
@@ -278,15 +249,7 @@
     describe('filter', function() {
       checkForNativeMethods(function() {
         var isEven = function(num) { return num % 2 === 0; };
-        _.filter= function (collection, test){
-          var filtered = [];
-          _.each(collection, function(item){
-            if (test(item)){
-               filtered.push(item);
-          }
-          });
-          return filtered;
-        }
+        _.filter([1, 2, 3, 4], isEven)
       });
 
       it('should return all even numbers in an array', function() {
@@ -315,15 +278,7 @@
     describe('reject', function() {
       checkForNativeMethods(function() {
         var isEven = function(num) { return num % 2 === 0; };
-        _.reject = function(collection, test){
-          var rejected = [];
-          _.each(collection, function(item){
-            if (!test(item)){
-              rejected.push(item);
-            }
-          });
-          return rejected;
-        }
+        _.reject([1, 2, 3, 4, 5, 6], isEven)
       });
 
       it('should reject all even numbers', function() {
@@ -350,17 +305,6 @@
     });
 
     describe('uniq', function() {
-      _.uniq = function(array, isSorted, iterator) {
-        var uniqueValues = [];
-        _.each(array, function(item){
-          if(_.indexOf(uniqueValues, item) === -1){
-            uniqueValues.push(item);
-          }
-        })
-        return uniqueValues;
-      };
-
-
 
       it('should not mutate the input array', function() {
         var input = [1, 2, 3, 4, 5];
@@ -402,7 +346,7 @@
         var iterator = function(value) { return value === 1; };
         var numbers = [1, 2, 2, 3, 4, 4];
 
-        expect(_.uniq(numbers)).to.eql([1, 2, 3, 4]);
+        expect(_.uniq(numbers, true, iterator)).to.eql([1, 2]);
       });
 
       it('should produce a brand new array instead of modifying the input array', function() {
@@ -415,14 +359,9 @@
 
     describe('map', function() {
       checkForNativeMethods(function() {
-        _.map = function(collection, iterator) {
-        var result = [];
-          _.each(collection, function(item){
-            result.push(iterator(item)); 
-        
-          });
-          return result;
-        }
+        _.map([1, 2, 3, 4], function(num) {
+          return num * 2;
+        })
       });
 
       it('should not mutate the input array', function() {
@@ -506,28 +445,8 @@
 
     describe('reduce', function() {
       checkForNativeMethods(function() {
-        _.reduce = function(collection, iterator, acc) {
-            
-           if (acc === undefined){
-            acc = collection[0];
-            for (var j =1; j < collection.length; j++){
-            //  iterator(acc, collection[j]);
-            //  if (typeof _.identity(iterator(collection[j])) === "number"){
-               acc = iterator(acc, collection[j]);
-             }
-            
-            //}
-            return acc;
-          } else {
-            for (var k =0; k < collection.length; k++){
-              acc = iterator(acc, collection[k]);
-            }
-            return acc;
-          } 
-        
-        };
-
-         
+        var add = function(tally, item) {return tally + item; };
+        _.reduce([1, 2, 3, 4], add)
       });
 
       it('should be a function', function() {
