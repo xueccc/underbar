@@ -188,7 +188,7 @@
         accumulator = iterator(accumulator, item);
       });
       return accumulator;
-  };
+  }
 };
 
   // Determine if the array or object contains a given value (using `===`).
@@ -207,12 +207,52 @@
   // Determine whether all of the elements match a truth test.
   _.every = function(collection, iterator) {
     // TIP: Try re-using reduce() here.
+    if (iterator === undefined){
+      iterator = _.identity;
+    } 
+    var itertedCol =  _.reduce(collection, function(acc ,item){
+      if(iterator(item)){
+        acc.push(true);
+      } else {
+        acc.push(false);
+      }
+     return acc;
+    }, []);
+    
+    if (_.contains(itertedCol, false)){
+      return false;
+    } else {
+      return true;
+    }
+
   };
 
   // Determine whether any of the elements pass a truth test. If no iterator is
   // provided, provide a default one
   _.some = function(collection, iterator) {
     // TIP: There's a very clever way to re-use every() here.
+    if (collection.length === 0){
+      return false;
+    }
+
+    if (iterator === undefined){
+      iterator = _.identity;
+    } 
+    var itertedCol =  _.reduce(collection, function(acc ,item){
+      if(iterator(item)){
+        acc.push(true);
+      } else {
+        acc.push(false);
+      }
+     return acc;
+    }, []);
+    
+    if (_.contains(itertedCol, true)){
+      return true;
+    } else {
+      return false;
+    }
+
   };
 
 
@@ -235,6 +275,13 @@
   //     bla: "even more stuff"
   //   }); // obj1 now contains key1, key2, key3 and bla
   _.extend = function(obj) {
+
+    for (var i = 1; i < arguments.length; i++){
+      for(var key in arguments[i]){
+      arguments[0][key] = arguments[i][key];
+      }
+    }
+     return arguments[0]; 
   };
 
   // Like extend, but doesn't ever overwrite a key that already
