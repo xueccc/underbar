@@ -275,18 +275,47 @@
   //     bla: "even more stuff"
   //   }); // obj1 now contains key1, key2, key3 and bla
   _.extend = function(obj) {
-
-    for (var i = 1; i < arguments.length; i++){
-      for(var key in arguments[i]){
-      arguments[0][key] = arguments[i][key];
-      }
+    var argArray = [];
+    for (var j = 0; j < arguments.length; j++){
+      argArray[j] = arguments[j];
     }
-     return arguments[0]; 
-  };
+
+    for (var i = 1; i < argArray.length; i++){
+      for (var key in argArray[i]){
+         arguments[0][key] = argArray[i][key];
+      
+      // for(var key in arguments[i]){
+      // arguments[0][key] = arguments[i][key];
+      // }
+      }
+    };
+    return arguments[0]; 
+}
 
   // Like extend, but doesn't ever overwrite a key that already
   // exists in obj
   _.defaults = function(obj) {
+
+    var argArray = [];
+    for (var j = 0; j < arguments.length; j++){
+      argArray[j] = arguments[j];
+    }
+    var keysArray = [];
+    _.each(arguments[0], function(value, key){
+    keysArray.push(key);
+    });
+    
+    for (var i = 1; i < arguments.length; i++){
+      for(var key in arguments[i]){
+        if (_.contains(keysArray, key)){
+          _.identity(key);
+        } else {
+          keysArray.push(key);
+          arguments[0][key] = arguments[i][key];
+        }
+      }
+    }
+   return arguments[0];
   };
 
 
@@ -330,6 +359,22 @@
   // already computed the result for the given argument and return that value
   // instead if possible.
   _.memoize = function(func) {
+    var result;
+    var memo = {};
+    
+    
+      return function(){
+        var convertedArg = Array.prototype.slice.call(arguments);
+        
+         if (memo[JSON.stringify(convertedArg)] !== undefined){
+           return memo[JSON.stringify(convertedArg)];
+         } else {
+           result = func.apply(this, arguments);
+           memo[JSON.stringify(convertedArg)] = result;
+          return result;
+         }
+         };
+    
   };
 
   // Delays a function for the given number of milliseconds, and then calls
@@ -339,6 +384,7 @@
   // parameter. For example _.delay(someFunction, 500, 'a', 'b') will
   // call someFunction('a', 'b') after 500ms
   _.delay = function(func, wait) {
+    setTimeout(func.bind(this, arguments[2], arguments[3]), wait); 
   };
 
 
@@ -353,6 +399,15 @@
   // input array. For a tip on how to make a copy of an array, see:
   // http://mdn.io/Array.prototype.slice
   _.shuffle = function(array) {
+    var newArr = array.slice();
+    var j, x, i;
+    for (i = newArr.length - 1; i > 0; i--) {
+        j = Math.floor(Math.random() * (i + 1));
+        x = newArr[i];
+        newArr[i] = newArr[j];
+        newArr[j] = x;
+    }
+    return newArr;
   };
 
 
